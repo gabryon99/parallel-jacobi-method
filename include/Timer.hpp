@@ -73,6 +73,10 @@ namespace spm {
         }
 
     };
+
+    std::vector<double>
+    solveJacobiSequential(const std::vector<double> &A, const std::vector<double> &b, unsigned int iterations,
+                          long *time);
 }
 
 #endif //JACOBI_SPM_TIMER_HPP
