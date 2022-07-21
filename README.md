@@ -1,5 +1,5 @@
 <div id="top"></div>
-[![MIT License][license-shield]][license-url]
+![MIT License][license-shield]][license-url]
 ![file-count-shield]
 
 ## Parallel Jacobi Method
