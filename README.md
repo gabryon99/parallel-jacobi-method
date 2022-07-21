@@ -33,6 +33,16 @@ This is a sample run on my machine:
 ```
 It runs the Jacobi solver using a matrix of size 4096 x 4096 doubles with 8 parallel workers.
 
+### Build
+
+To build the program go the project's root directorty and type in a terminal:
+```shell
+mkdir build
+cd build
+cmake ..
+cmake --build .
+```
+
 ### Report
 
 The report will contain information about the project's performances (such as the speedup) with some charts.
