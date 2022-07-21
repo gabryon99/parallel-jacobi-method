@@ -1,32 +1,80 @@
 #include <iostream>
+#include <thread>
+
+#include <argparse/argparse.hpp>
+
+#include <fmt/core.h>
+#include <fmt/color.h>
 
 #include "../include/Solver.hpp"
 
-int main() {
+constexpr int DEFAULT_SEED = 42;
+constexpr int DEFAULT_ITERATIONS = 1000;
 
-    constexpr std::size_t size = 128;
+auto printResults(std::string_view kind, long time) -> void {
+    fmt::print("[info][Time] :: {} time: ", kind);
+    fmt::print(fmt::fg(fmt::color::green) | fmt::emphasis::bold, "{}", time);
+    fmt::print("microseconds \n");
+}
 
-    auto A = spm::generateMatrix<double>(size, spm::MatrixType::DIAGONALLY_DOMINANT);
-    auto b = spm::generateVector<double>(size);
+int main(int argc, char** argv) {
+
+    argparse::ArgumentParser program("jacobi");
+    program.add_description("Solve linear system equations using Jacobi method.");
+
+    program.add_argument("size")
+            .help("matrix and vector sizes to generate")
+            .scan<'i', int>();
+
+    program.add_argument("nw")
+            .help("number of parallel workers to spawn")
+            .default_value(std::thread::hardware_concurrency())
+            .scan<'i', int>();
+
+    program.add_argument("seed")
+            .help("pseudo-random number generator's seed")
+            .default_value(DEFAULT_SEED)
+            .scan<'i', int>();
+
+
+    program.add_argument("iterations")
+            .help("how many Jacobi method iteration to perform")
+            .default_value(DEFAULT_ITERATIONS)
+            .scan<'i', int>();
+
+    try {
+        program.parse_args(argc, argv);
+    }
+    catch (const std::runtime_error& err) {
+        std::cerr << err.what() << std::endl;
+        std::cerr << program;
+        std::exit(1);
+    }
+
+    auto seed = program.get<int>("seed");
+    auto size = program.get<int>("size");
+    auto nw = program.get<int>("nw");
+    auto iterations = program.get<int>("iterations");
+
+    auto A = spm::generateMatrix<double>(size, spm::MatrixType::DIAGONALLY_DOMINANT, seed);
+    auto b = spm::generateVector<double>(size, seed);
 
     long timeSequential = 0;
     long timeParallel = 0;
     long timeFastFlow1 = 0;
 
-    auto x1 = spm::solveJacobiSequential(A, b, 1000, &timeSequential);
-    auto x2 = spm::solveJacobiParallel(A, b, 1000, 8, &timeParallel);
-    auto x3 = spm::solveJacobiFastFlow(A, b, 1000, 8, &timeFastFlow1);
+    fmt::print("[info][Main] Solving linear system (Matrix Size = {} x {}, Vector Size = {}, Iterations = {}, Seed = {}, Workers = {})...\n", size, size, size, iterations, seed, nw);
 
-    spm::printVector(x1);
-    spm::printVector(x2);
-    spm::printVector(x3);
+    // We can discard results
+    spm::solveJacobiSequential(A, b, iterations, &timeSequential);
+    spm::solveJacobiParallel(A, b, iterations, nw, &timeParallel);
+    spm::solveJacobiFastFlowPF(A, b, iterations, nw, &timeFastFlow1);
 
-    std::cout << "Sequential: " << timeSequential << "\n";
-    std::cout << "Parallel: " << timeParallel << "\n";
-    std::cout << "ParallelFor FastFlow: " << timeFastFlow1 << "\n";
+    printResults("Sequential", timeSequential);
+    printResults("Native C++ Threads", timeParallel);
+    printResults("FastFlow ParallelFor", timeFastFlow1);
 
-    std::cout << "Speedup Native: " << (static_cast<double>(timeSequential) / timeParallel) << "\n";
-    std::cout << "Speedup ParallelFor: " << (static_cast<double>(timeSequential) / timeFastFlow1) << "\n";
+    printResults()
 
     return 0;
 }

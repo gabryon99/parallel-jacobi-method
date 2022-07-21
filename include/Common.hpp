@@ -37,17 +37,8 @@ namespace spm {
      * @param out
      */
     template <typename T>
-    auto printVector(const Vector<T> &v, std::ostream& out = std::cout) -> void {
-        out << "[ ";
-        for (const auto num: v) {
-            if constexpr (std::is_floating_point<T>::value) {
-                out << std::setw(4) << std::left << std::setprecision(4) << std::fixed << num << " ";
-            }
-            else {
-                out << num << "\t";
-            }
-        }
-        out << " ]\n";
+    auto printVector(const Vector<T> &v) -> void {
+        fmt::print("{}\n", v);
     }
 
     /***
@@ -57,9 +48,9 @@ namespace spm {
      * @param out
      */
     template <typename T>
-    auto printMatrix(const Matrix<T> &m, std::ostream& out = std::cout) -> void {
+    auto printMatrix(const Matrix<T> &m) -> void {
         for (const auto& row: m) {
-            printVector(row, out);
+            printVector(row);
         }
     }
 
@@ -102,7 +93,7 @@ namespace spm {
 
                         for (std::size_t j = 0; j < size; j++) {
                             if (j != i) {
-                                auto cell{ distr(eng) };
+                                auto cell = distr(eng);
                                 generatedMatrix[i][j] = cell;
                                 sum = sum + cell;
                             }

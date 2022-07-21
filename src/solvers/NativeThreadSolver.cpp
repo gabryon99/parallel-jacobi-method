@@ -3,7 +3,7 @@
 #include <thread>
 #include <string_view>
 
-#include "../include/Solver.hpp"
+#include "../../include/Solver.hpp"
 
 spm::VectorD spm::solveJacobiParallel(const spm::MatrixD& A, const spm::VectorD& b, unsigned iterations, unsigned parallelDegree, long* time) {
 
@@ -14,11 +14,12 @@ spm::VectorD spm::solveJacobiParallel(const spm::MatrixD& A, const spm::VectorD&
     auto newSolution = spm::VectorD(matrixSize, 0);
 
     auto threads = std::vector<std::thread>{};
-    auto syncPoint = std::barrier(parallelDegree, [&iterations]() {
+    auto syncPoint = std::barrier(parallelDegree, [&]() {
+        oldSolution = newSolution;
         iterations--;
     });
 
-    auto task = [&iterations, &A, &b, &syncPoint, &oldSolution, &newSolution](std::size_t from, std::size_t to) -> void {
+    auto task = [&](std::size_t from, std::size_t to) -> void {
 
         auto matrixSize = A.size();
 
@@ -30,11 +31,10 @@ spm::VectorD spm::solveJacobiParallel(const spm::MatrixD& A, const spm::VectorD&
                         sigma += A[i][j] * oldSolution[j];
                     }
                 }
-                newSolution[i] = (1.0 / A[i][i]) * (b[i] - sigma);
+                newSolution[i] = ((b[i] - sigma) / A[i][i]);
             }
 
             syncPoint.arrive_and_wait();
-            for (std::size_t i = from; i <= to; i++) oldSolution[i] = newSolution[i];
         }
     };
 

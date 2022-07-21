@@ -5,6 +5,7 @@
 #include <iostream>
 #include <type_traits>
 #include <string_view>
+#include <fmt/core.h>
 
 namespace spm {
     template<typename TimeType = std::chrono::microseconds>
@@ -55,7 +56,7 @@ namespace spm {
         }
 
         void printMessage(auto duration) {
-            outFile << "[Timer] :: " << message << ", duration: " << std::to_string(duration) << " " << getTimeLabel() << "\n";
+            outFile << fmt::format("[info][Timer] :: {}, lasts {} {}\n", message, std::to_string(duration), getTimeLabel());
         }
 
     public:

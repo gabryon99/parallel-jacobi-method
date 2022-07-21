@@ -1,4 +1,4 @@
-#include "../include/Solver.hpp"
+#include "../../include/Solver.hpp"
 
 spm::VectorD spm::solveJacobiSequential(const spm::MatrixD& A, const spm::VectorD& b, unsigned iterations, long* time) {
 
@@ -24,8 +24,10 @@ spm::VectorD spm::solveJacobiSequential(const spm::MatrixD& A, const spm::Vector
                     }
                 }
 
-                oldSolution[i] = (newSolution[i] = (1.0 / A[i][i]) * (b[i] - sigma));
+                newSolution[i] = ((b[i] - sigma) / A[i][i]);
             }
+
+            oldSolution = newSolution;
         }
     }
 

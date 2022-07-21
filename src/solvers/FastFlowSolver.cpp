@@ -1,12 +1,13 @@
-#include "../include/Solver.hpp"
+#include "../../include/Solver.hpp"
 
 #include <string_view>
+
 #include <ff/parallel_for.hpp>
 
-spm::VectorD spm::solveJacobiFastFlow(const spm::MatrixD &A, const spm::VectorD &b, unsigned int iterations,
-                                      unsigned int parallelDegree, long *time) {
+spm::VectorD spm::solveJacobiFastFlowPF(const spm::MatrixD &A, const spm::VectorD &b, unsigned int iterations,
+                                        unsigned int parallelDegree, long *time) {
 
-    using namespace std::string_view_literals;
+   using namespace std::string_view_literals;
 
     auto matrixSize = static_cast<long>(A.size());
     auto oldSolution = spm::VectorD(matrixSize, 1);
@@ -27,9 +28,8 @@ spm::VectorD spm::solveJacobiFastFlow(const spm::MatrixD &A, const spm::VectorD 
                         sigma += A[i][j] * oldSolution[j];
                     }
                 }
-                newSolution[i] = (1.0 / A[i][i]) * (b[i] - sigma);
+                newSolution[i] = ((b[i] - sigma) / A[i][i]);
             }, parallelDegree);
-
 
             oldSolution = newSolution;
             iterations--;
