@@ -74,7 +74,5 @@ int main(int argc, char** argv) {
     printResults("Native C++ Threads", timeParallel);
     printResults("FastFlow ParallelFor", timeFastFlow1);
 
-    printResults()
-
     return 0;
 }
