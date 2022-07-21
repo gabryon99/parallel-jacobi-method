@@ -1,3 +1,7 @@
+<div id="top"></div>
+[![MIT License][license-shield]][license-url]
+![file-count-shield]
+
 ## Parallel Jacobi Method
 
 This repository contains the final project for "__Parallel and Distributed Systems: Paradigms and Models__" (a.y. 2021/2022)
