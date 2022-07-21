@@ -11,7 +11,7 @@ n) iteratively computing a new approximation of the values of the different vari
 formula:
 
 $$
-x_i^{(k + 1)} = \frac{1}{a_{ii}}(b_i - \sum_{j != i}a_{ij} * x_j^k)
+x_i^{(k + 1)} = \frac{1}{a_{ii}}\bigg(b_i - \sum_{j != i}a_{ij} * x_j^k\bigg) \quad i = 1 \dots n
 $$
 
 starting from some initial assignment of each xi (e.g. 0).
