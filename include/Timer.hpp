@@ -61,7 +61,7 @@ namespace spm {
 
     public:
 
-        Timer(std::string_view m, std::ostream& out = std::cout) : message(m), outFile(out), elapsedTime(nullptr) {
+        explicit Timer(std::string_view m, std::ostream& out = std::cout) : message(m), outFile(out), elapsedTime(nullptr) {
             start = std::chrono::system_clock::now();
         }
 
@@ -74,10 +74,6 @@ namespace spm {
         }
 
     };
-
-    std::vector<double>
-    solveJacobiSequential(const std::vector<double> &A, const std::vector<double> &b, unsigned int iterations,
-                          long *time);
 }
 
 #endif //JACOBI_SPM_TIMER_HPP
