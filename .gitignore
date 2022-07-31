@@ -1,2 +1,10 @@
 # Project exclude paths
 build/
+.idea/
+scripts/plots
+scripts/.ipynb_checkpoints
+scripts/images/.ipynb_checkpoints
+*.csv
+*.gz
+*.log
+*.synctex
