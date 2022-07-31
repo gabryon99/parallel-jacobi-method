@@ -39,6 +39,17 @@ It runs the Jacobi solver using a matrix of size 4096 x 4096 doubles with 8 para
 
 The report will contain information about the project's performances (such as the speedup) with some charts.
 
+### Building
+
+To build the project run these commands on a terminal:
+
+```shell
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES:BOOL=OFF -DBUILD_TESTS:BOOL=OFF ..
+cmake --build .
+```
+
 ### Tests
 
 Tests can be run using CTest utility. The `CMakeLists.txt` file define a function
