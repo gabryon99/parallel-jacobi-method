@@ -1,20 +1,38 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.22)
 project(Jacobi_SPM)
 
 include(FetchContent)
+enable_testing()
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -lc++abi")
+
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O1")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 add_compile_definitions(TRACE_PERFORMANCE)
 
+function(NEW_TEST_SUITE MATRIX_SIZE)
+    foreach (nw RANGE 2 32 2)
+        message(STATUS "Creating new test suite (Matrix Size: ${MATRIX_SIZE}, Workers: ${nw})")
+        add_test(Matrix_${MATRIX_SIZE}_${nw} ${PROJECT_NAME} -o output_${MATRIX_SIZE}.csv ${MATRIX_SIZE} ${nw} 42 1000)
+    endforeach ()
+endfunction()
+
+# Fetch argparse from GitHub to parse arguments from command line
+# in a modern C++ way.
+message(STATUS "Fetching 'argparse' from GitHub...")
 FetchContent_Declare(
         argparse
         GIT_REPOSITORY https://github.com/p-ranav/argparse.git
 )
+message(STATUS "Fetching 'FastFlow' from GitHub...")
 FetchContent_Declare(
         fastflow
         GIT_REPOSITORY https://github.com/fastflow/fastflow.git
 )
+message(STATUS "Fetching 'fmt' from GitHub...")
+# Fetch fmt library from GitHub to format strings easily.
 FetchContent_Declare(
         fmt
         GIT_REPOSITORY https://github.com/fmtlib/fmt.git
@@ -36,3 +54,10 @@ add_executable(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME} argparse fmt)
 
+# Define tests
+new_test_suite(256)
+new_test_suite(512)
+new_test_suite(1024)
+new_test_suite(2048)
+new_test_suite(4096)
+new_test_suite(8192)

@@ -29,19 +29,9 @@ The program expects four positional arguments:
 
 This is a sample run on my machine:
 ```shell
-./jacobi 4096 8 42 1000
+./jacobi -o output.csv 4096 8 42 1000
 ```
 It runs the Jacobi solver using a matrix of size 4096 x 4096 doubles with 8 parallel workers.
-
-### Build
-
-To build the program go the project's root directorty and type in a terminal:
-```shell
-mkdir build
-cd build
-cmake ..
-cmake --build .
-```
 
 ### Report
 
@@ -49,7 +39,27 @@ The report will contain information about the project's performances (such as th
 
 ### Tests
 
-No tests have been performed, yet.
+Tests can be run using CTest utility. The `CMakeLists.txt` file define a function
+to test Jacobi method on different matrix sizes. There are defined 6 test suites, each suite 
+use threads from 2 to 32, increasing by two each time.
+
+```cmake
+function(NEW_TEST_SUITE MATRIX_SIZE)
+    foreach (nw RANGE 2 32 2)
+        message(STATUS "Creating new test suite (Matrix Size: ${MATRIX_SIZE}, Workers: ${nw})")
+        add_test(Matrix_${MATRIX_SIZE}_${nw} ${PROJECT_NAME} -o output_${MATRIX_SIZE}.csv ${MATRIX_SIZE} ${nw} 42 1000)
+    endforeach ()
+endfunction()
+
+# Define a new test suite with a matrix 8Kb x 8Kb
+new_test_suite(8192)
+```
+
+Tests can be run inside the build directory after building the project, invoking `ctest`.
+
+The Jupyter Notebook defined inside `script` folder generate charts used by the report. For instance,
+these are the application's time over a matrix of size 4Kb x 4Kb (_lower is better_).
+![Jacobi Method 4Kb](./scripts/images/times_plot_4096.png)
 
 ### Dependencies
 
@@ -58,7 +68,7 @@ The project has three dependencies. Each of them is downloaded using CMake's Fet
 * [argparse](https://github.com/p-ranav/argparse.git)
 * [fmt](https://github.com/fmtlib/fmt.git)
 * [FastFlow](https://github.com/fastflow/fastflow.git)
-* CMake 3.23
+* [CMake 3.23](https://cmake.org)
 
 ### License
 

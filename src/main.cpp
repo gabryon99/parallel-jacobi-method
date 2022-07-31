@@ -5,6 +5,7 @@
 
 #include <fmt/core.h>
 #include <fmt/color.h>
+#include <fstream>
 
 #include "../include/Solver.hpp"
 
@@ -12,9 +13,9 @@ constexpr int DEFAULT_SEED = 42;
 constexpr int DEFAULT_ITERATIONS = 1000;
 
 auto printResults(std::string_view kind, long time) -> void {
-    fmt::print("[info][Time] :: {} time: ", kind);
+    fmt::print("[info][Main] :: {} time: ", kind);
     fmt::print(fmt::fg(fmt::color::green) | fmt::emphasis::bold, "{}", time);
-    fmt::print("microseconds \n");
+    fmt::print(" microseconds \n");
 }
 
 int main(int argc, char** argv) {
@@ -36,11 +37,14 @@ int main(int argc, char** argv) {
             .default_value(DEFAULT_SEED)
             .scan<'i', int>();
 
-
     program.add_argument("iterations")
             .help("how many Jacobi method iteration to perform")
             .default_value(DEFAULT_ITERATIONS)
             .scan<'i', int>();
+
+    program.add_argument("-o", "--output")
+            .required()
+            .help("specify the output CSV file containing execution times.");
 
     try {
         program.parse_args(argc, argv);
@@ -55,6 +59,7 @@ int main(int argc, char** argv) {
     auto size = program.get<int>("size");
     auto nw = program.get<int>("nw");
     auto iterations = program.get<int>("iterations");
+    auto outputFilename = program.get<std::string>("--output");
 
     auto A = spm::generateMatrix<double>(size, spm::MatrixType::DIAGONALLY_DOMINANT, seed);
     auto b = spm::generateVector<double>(size, seed);
@@ -67,12 +72,18 @@ int main(int argc, char** argv) {
 
     // We can discard results
     spm::solveJacobiSequential(A, b, iterations, &timeSequential);
+
     spm::solveJacobiParallel(A, b, iterations, nw, &timeParallel);
     spm::solveJacobiFastFlowPF(A, b, iterations, nw, &timeFastFlow1);
 
-    printResults("Sequential", timeSequential);
-    printResults("Native C++ Threads", timeParallel);
-    printResults("FastFlow ParallelFor", timeFastFlow1);
+    // printResults("Sequential", timeSequential);
+    // printResults("Native C++ Threads", timeParallel);
+    // printResults("FastFlow ParallelFor", timeFastFlow1);
+
+    std::ofstream csvFile;
+    csvFile.open(outputFilename, std::ios::app | std::ios::out);
+    csvFile << fmt::format("{},{},{},{},{},{}\n", size, nw, timeParallel, timeFastFlow1, (static_cast<double>(timeSequential))/timeParallel, (static_cast<double>(timeSequential))/timeFastFlow1);
+    csvFile.close();
 
     return 0;
 }
