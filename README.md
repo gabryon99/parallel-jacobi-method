@@ -1,6 +1,6 @@
 ## Parallel Jacobi Method
 
-This repository contains the final project for "__Parallel and Distributed Systems: Paradigms and Models__" (a.y. 2021/2022)
+This repository contains the final project for "**Parallel and Distributed Systems: Paradigms and Models**" (a.y. 2021/2022)
 course at University of Pisa.
 
 ### Problem Description
@@ -22,15 +22,17 @@ We require to implement the Jacobi method with both native C++ threads and FastF
 
 The program expects four positional arguments:
 
-* __size__: how big the matrix will be.
-* __nw__: how many workers will be used in the parallel computation.
-* __seed__: pseudo-random generator's seed used to generate diagonally dominant matrices.
-* __iterations__: how many iterations the solver will perform.
+- **size**: how big the matrix will be.
+- **nw**: how many workers will be used in the parallel computation.
+- **seed**: pseudo-random generator's seed used to generate diagonally dominant matrices.
+- **iterations**: how many iterations the solver will perform.
 
 This is a sample run on my machine:
+
 ```shell
 ./jacobi -o output.csv 4096 8 42 1000
 ```
+
 It runs the Jacobi solver using a matrix of size 4096 x 4096 doubles with 8 parallel workers.
 
 ### Report
@@ -40,7 +42,7 @@ The report will contain information about the project's performances (such as th
 ### Tests
 
 Tests can be run using CTest utility. The `CMakeLists.txt` file define a function
-to test Jacobi method on different matrix sizes. There are defined 6 test suites, each suite 
+to test Jacobi method on different matrix sizes. There are defined 6 test suites, each suite
 use threads from 2 to 32, increasing by two each time.
 
 ```cmake
@@ -59,16 +61,23 @@ Tests can be run inside the build directory after building the project, invoking
 
 The Jupyter Notebook defined inside `script` folder generate charts used by the report. For instance,
 these are the application's time over a matrix of size 4Kb x 4Kb (_lower is better_).
-![Jacobi Method 4Kb](./scripts/images/times_plot_4096.png)
+
+MacBook Pro 16" performances:
+![Jacobi Method Macbook 4Kb](./scripts/images/MacBook/times_plot_4096.png)
+
+Remote Machine performances:
+![Jacobi Method Macbook 4Kb](./scripts/images/VM/times_plot_4096.png)
+
+All the plots can be found inside the folder [scripts/images](./scripts/images/).
 
 ### Dependencies
 
 The project has three dependencies. Each of them is downloaded using CMake's FetchContent module.
 
-* [argparse](https://github.com/p-ranav/argparse.git)
-* [fmt](https://github.com/fmtlib/fmt.git)
-* [FastFlow](https://github.com/fastflow/fastflow.git)
-* [CMake 3.23](https://cmake.org)
+- [argparse](https://github.com/p-ranav/argparse.git)
+- [fmt](https://github.com/fmtlib/fmt.git)
+- [FastFlow](https://github.com/fastflow/fastflow.git)
+- [CMake 3.23](https://cmake.org)
 
 ### License
 
