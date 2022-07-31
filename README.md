@@ -73,11 +73,9 @@ Tests can be run inside the build directory after building the project, invoking
 The Jupyter Notebook defined inside `script` folder generate charts used by the report. For instance,
 these are the application's time over a matrix of size 4Kb x 4Kb (_lower is better_).
 
-MacBook Pro 16" performances:
 ![Jacobi Method Macbook 4Kb](./scripts/images/MacBook/times_plot_4096.png)
 
-Remote Machine performances:
-![Jacobi Method Macbook 4Kb](./scripts/images/VM/times_plot_4096.png)
+![Jacobi Method Remote Machine 4Kb](./scripts/images/VM/times_plot_4096.png)
 
 All the plots can be found inside the folder [scripts/images](./scripts/images/).
 
