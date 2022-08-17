@@ -8,14 +8,15 @@
 #include <fmt/core.h>
 
 namespace spm {
+
     template<typename TimeType = std::chrono::microseconds>
     class Timer {
 
-        std::ostream& outFile;
+        std::ostream& m_outFile;
 
-        std::string_view message;
-        std::chrono::system_clock::time_point start;
-        std::chrono::system_clock::time_point stop;
+        std::string_view m_message{};
+        std::chrono::system_clock::time_point m_start{};
+        std::chrono::system_clock::time_point m_stop{};
 
     private:
 
@@ -42,31 +43,30 @@ namespace spm {
 
         void stopTimer() {
 
-            stop = std::chrono::system_clock::now();
+            m_stop = std::chrono::system_clock::now();
 
-            auto elapsed = stop - start;
+            auto elapsed = m_stop - m_start;
             auto duration = std::chrono::duration_cast<TimeType>(elapsed).count();
 
             if (elapsedTime != nullptr) {
                 (*elapsedTime) = duration;
             }
 
-
             printMessage(duration);
         }
 
         void printMessage(auto duration) {
-            outFile << fmt::format("[info][Timer] :: {}, lasts {} {}\n", message, std::to_string(duration), getTimeLabel());
+            m_outFile << fmt::format("[info][Timer] :: {}, lasts {} {}\n", m_message, std::to_string(duration), getTimeLabel());
         }
 
     public:
 
-        explicit Timer(std::string_view m, std::ostream& out = std::cout) : message(m), outFile(out), elapsedTime(nullptr) {
-            start = std::chrono::system_clock::now();
+        explicit Timer(std::string_view m, std::ostream& out = std::cout) : m_message(m), m_outFile(out), elapsedTime(nullptr) {
+            m_start = std::chrono::system_clock::now();
         }
 
-        Timer(std::string_view m, long *us, std::ostream& out = std::cout) : message(m), outFile(out), elapsedTime(us) {
-            start = std::chrono::system_clock::now();
+        Timer(std::string_view m, long *us, std::ostream& out = std::cout) : m_message(m), m_outFile(out), elapsedTime(us) {
+            m_start = std::chrono::system_clock::now();
         }
 
         ~Timer() {
