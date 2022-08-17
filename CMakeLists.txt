@@ -5,18 +5,18 @@ include(FetchContent)
 enable_testing()
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -lc++abi")
-
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O1")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 add_compile_definitions(TRACE_PERFORMANCE)
 
 function(NEW_TEST_SUITE MATRIX_SIZE)
-    foreach (nw RANGE 2 32 2)
-        message(STATUS "Creating new test suite (Matrix Size: ${MATRIX_SIZE}, Workers: ${nw})")
-        add_test(Matrix_${MATRIX_SIZE}_${nw} ${PROJECT_NAME} -o output_${MATRIX_SIZE}.csv ${MATRIX_SIZE} ${nw} 42 1000)
-    endforeach ()
+    foreach(test RANGE 1 4 1)
+        foreach (nw RANGE 2 32 2)
+            message(STATUS "Creating new test suite (Matrix Size: ${MATRIX_SIZE}, Workers: ${nw})")
+            add_test(Matrix_${MATRIX_SIZE}_${nw} ${PROJECT_NAME} -o output_${MATRIX_SIZE}_${test}.csv ${MATRIX_SIZE} ${nw} 42 1000)
+        endforeach ()
+    endforeach()
 endfunction()
 
 # Fetch argparse from GitHub to parse arguments from command line
@@ -61,3 +61,4 @@ new_test_suite(1024)
 new_test_suite(2048)
 new_test_suite(4096)
 new_test_suite(8192)
+new_test_suite(16384)
