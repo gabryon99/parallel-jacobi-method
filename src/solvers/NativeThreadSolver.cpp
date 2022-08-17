@@ -28,10 +28,10 @@ spm::VectorD spm::solveJacobiParallel(const spm::MatrixD& A, const spm::VectorD&
                 double sigma = 0.0;
                 for (std::size_t j = 0; j < matrixSize; j++) {
                     if (i != j) {
-                        sigma += A[i][j] * oldSolution[j];
+                        sigma += A(i, j) * oldSolution[j];
                     }
                 }
-                newSolution[i] = ((b[i] - sigma) / A[i][i]);
+                newSolution[i] = ((b[i] - sigma) / A(i, i));
             }
 
             syncPoint.arrive_and_wait();

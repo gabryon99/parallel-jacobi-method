@@ -25,10 +25,10 @@ spm::VectorD spm::solveJacobiFastFlowPF(const spm::MatrixD &A, const spm::Vector
                 double sigma = 0.0;
                 for (std::size_t j = 0; j < matrixSize; j++) {
                     if (i != j) {
-                        sigma += A[i][j] * oldSolution[j];
+                        sigma += A(i, j) * oldSolution[j];
                     }
                 }
-                newSolution[i] = ((b[i] - sigma) / A[i][i]);
+                newSolution[i] = ((b[i] - sigma) / A(i, i));
             }, parallelDegree);
 
             oldSolution = newSolution;

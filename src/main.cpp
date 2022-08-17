@@ -9,9 +9,6 @@
 
 #include "../include/Solver.hpp"
 
-constexpr int DEFAULT_SEED = 42;
-constexpr int DEFAULT_ITERATIONS = 1000;
-
 auto printResults(std::string_view kind, long time) -> void {
     fmt::print("[info][Main] :: {} time: ", kind);
     fmt::print(fmt::fg(fmt::color::green) | fmt::emphasis::bold, "{}", time);
@@ -34,12 +31,12 @@ int main(int argc, char** argv) {
 
     program.add_argument("seed")
             .help("pseudo-random number generator's seed")
-            .default_value(DEFAULT_SEED)
+            .default_value(spm::Constants::DEFAULT_SEED)
             .scan<'i', int>();
 
     program.add_argument("iterations")
             .help("how many Jacobi method iteration to perform")
-            .default_value(DEFAULT_ITERATIONS)
+            .default_value(spm::Constants::DEFAULT_ITERATIONS)
             .scan<'i', int>();
 
     program.add_argument("-o", "--output")
@@ -72,7 +69,6 @@ int main(int argc, char** argv) {
 
     // We can discard results
     spm::solveJacobiSequential(A, b, iterations, &timeSequential);
-
     spm::solveJacobiParallel(A, b, iterations, nw, &timeParallel);
     spm::solveJacobiFastFlowPF(A, b, iterations, nw, &timeFastFlow1);
 
