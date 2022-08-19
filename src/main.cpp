@@ -78,7 +78,20 @@ int main(int argc, char** argv) {
 
     std::ofstream csvFile;
     csvFile.open(outputFilename, std::ios::app | std::ios::out);
-    csvFile << fmt::format("{},{},{},{},{},{}\n", size, nw, timeParallel, timeFastFlow1, (static_cast<double>(timeSequential))/timeParallel, (static_cast<double>(timeSequential))/timeFastFlow1);
+
+    // Size,Workers,Parallel Time, FastFlow Time, Speedup Parallel, Speedup FastFlow, Efficiency Parallel, Efficiency Speedup
+    double speedupParallel = static_cast<double>(timeSequential) / static_cast<double>(timeParallel);
+    double speedupFastFlow = static_cast<double>(timeSequential) / static_cast<double>(timeFastFlow1);
+
+    double efficiencyParallel = speedupParallel / nw;
+    double efficiencyFastFlow = speedupFastFlow / nw;
+
+
+    csvFile << fmt::format("{},{},{},{},{},{},{},{}\n",
+                           size, nw,
+                           timeParallel, timeFastFlow1,
+                           speedupParallel, speedupFastFlow,
+                           efficiencyParallel, efficiencyFastFlow);
     csvFile.close();
 
     return 0;
