@@ -6,19 +6,19 @@ enable_testing()
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O1")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -lpthread")
 
 add_compile_definitions(TRACE_PERFORMANCE USE_1D_REPRESENTATION)
 
 # Function used to define a new test suite, used for the measurements.
 function(NEW_TEST_SUITE MATRIX_SIZE)
-    foreach(test RANGE 1 3 1)
+    foreach(test RANGE 2 3 1)
         # Useful to measure Scalability
         message(STATUS "Creating new test suite (Matrix Size: ${MATRIX_SIZE}, Workers: 1)")
-        add_test(Matrix_${MATRIX_SIZE}_1 ${PROJECT_NAME} -o output_${MATRIX_SIZE}_${test}.csv ${MATRIX_SIZE} 1 42 1000)
+        add_test(Matrix_${MATRIX_SIZE}_1_${test} ${PROJECT_NAME} -o output_${MATRIX_SIZE}_${test}.csv ${MATRIX_SIZE} 1 42 1000)
         foreach (nw RANGE 2 32 2)
             message(STATUS "Creating new test suite (Matrix Size: ${MATRIX_SIZE}, Workers: ${nw})")
-            add_test(Matrix_${MATRIX_SIZE}_${nw} ${PROJECT_NAME} -o output_${MATRIX_SIZE}_${test}.csv ${MATRIX_SIZE} ${nw} 42 1000)
+            add_test(Matrix_${MATRIX_SIZE}_${nw}_${test} ${PROJECT_NAME} -o output_${MATRIX_SIZE}_${test}.csv ${MATRIX_SIZE} ${nw} 42 1000)
         endforeach ()
     endforeach()
 endfunction()
