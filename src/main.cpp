@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
             .scan<'i', int>();
 
     program.add_argument("iterations")
-            .help("how many Jacobi method iteration to perform")
+            .help("how many Jacobi method iterations to perform")
             .default_value(spm::Constants::DEFAULT_ITERATIONS)
             .scan<'i', int>();
 
