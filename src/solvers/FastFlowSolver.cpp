@@ -4,7 +4,7 @@
 
 #include <ff/parallel_for.hpp>
 
-spm::VectorD spm::solveJacobiFastFlowPF(const spm::MatrixD &A, const spm::VectorD &b, unsigned int iterations,
+spm::VectorD spm::solveJacobiFastFlow(const spm::MatrixD &A, const spm::VectorD &b, unsigned int iterations,
                                         unsigned int parallelDegree, long *time) {
 
    using namespace std::string_view_literals;
@@ -31,6 +31,7 @@ spm::VectorD spm::solveJacobiFastFlowPF(const spm::MatrixD &A, const spm::Vector
                 newSolution[i] = ((b[i] - sigma) / A(i, i));
             }, parallelDegree);
 
+            // This section here will be executed by the main thread.
             oldSolution = newSolution;
             iterations--;
         }

@@ -9,6 +9,11 @@
 
 namespace spm {
 
+    /***
+     * Class used to measure times of computation in a C++ block, using
+     * the RAII pattern.
+     * @tparam TimeType
+     */
     template<typename TimeType = std::chrono::microseconds>
     class Timer {
 

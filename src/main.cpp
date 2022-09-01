@@ -17,7 +17,7 @@ auto printResults(std::string_view kind, long time) -> void {
 
 int main(int argc, char** argv) {
 
-    argparse::ArgumentParser program("jacobi");
+    argparse::ArgumentParser program("Jacobi_SPM");
     program.add_description("Solve linear system equations using Jacobi method.");
 
     program.add_argument("size")
@@ -47,6 +47,7 @@ int main(int argc, char** argv) {
         program.parse_args(argc, argv);
     }
     catch (const std::runtime_error& err) {
+        // We didn't succeed in parsing the arguments, exit the program.
         std::cerr << err.what() << std::endl;
         std::cerr << program;
         std::exit(1);
@@ -67,26 +68,22 @@ int main(int argc, char** argv) {
 
     fmt::print("[info][Main] Solving linear system (Matrix Size = {} x {}, Vector Size = {}, Iterations = {}, Seed = {}, Workers = {})...\n", size, size, size, iterations, seed, nw);
 
-    // We can discard results
+    // We can discard the results
     spm::solveJacobiSequential(A, b, iterations, &timeSequential);
     spm::solveJacobiParallel(A, b, iterations, nw, &timeParallel);
-    spm::solveJacobiFastFlowPF(A, b, iterations, nw, &timeFastFlow1);
+    spm::solveJacobiFastFlow(A, b, iterations, nw, &timeFastFlow1);
 
-    // printResults("Sequential", timeSequential);
-    // printResults("Native C++ Threads", timeParallel);
-    // printResults("FastFlow ParallelFor", timeFastFlow1);
-
-    std::ofstream csvFile;
-    csvFile.open(outputFilename, std::ios::app | std::ios::out);
-
-    // Size,Workers,Parallel Time, FastFlow Time, Speedup Parallel, Speedup FastFlow, Efficiency Parallel, Efficiency Speedup
     double speedupParallel = static_cast<double>(timeSequential) / static_cast<double>(timeParallel);
     double speedupFastFlow = static_cast<double>(timeSequential) / static_cast<double>(timeFastFlow1);
 
     double efficiencyParallel = speedupParallel / nw;
     double efficiencyFastFlow = speedupFastFlow / nw;
 
-
+    // Write collected measures into a csv file
+    std::ofstream csvFile;
+    csvFile.open(outputFilename, std::ios::app | std::ios::out);
+    // In order:
+    // Size ,Workers, Parallel Time, FastFlow Time, Speedup Parallel, Speedup FastFlow, Efficiency Parallel, Efficiency Speedup
     csvFile << fmt::format("{},{},{},{},{},{},{},{}\n",
                            size, nw,
                            timeParallel, timeFastFlow1,

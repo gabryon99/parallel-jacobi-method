@@ -10,6 +10,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 add_compile_definitions(TRACE_PERFORMANCE USE_1D_REPRESENTATION)
 
+# Function used to define a new test suite, used for the measurements.
 function(NEW_TEST_SUITE MATRIX_SIZE)
     foreach(test RANGE 1 3 1)
         # Useful to measure Scalability
@@ -46,6 +47,9 @@ FetchContent_MakeAvailable(argparse fastflow fmt)
 # FastFlow is header-only
 include_directories(${fastflow_SOURCE_DIR})
 
+# Execute mapping_string.sh to configure the machine.
+message(STATUS ${fastflow_SOURCE_DIR}/ff/mapping_string.sh)
+
 add_executable(${PROJECT_NAME}
         src/main.cpp
         include/Timer.hpp
@@ -57,7 +61,7 @@ add_executable(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME} argparse fmt)
 
-# Define tests
+# Define test suites
 new_test_suite(256)
 new_test_suite(512)
 new_test_suite(1024)

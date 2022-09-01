@@ -15,7 +15,9 @@ spm::VectorD spm::solveJacobiParallel(const spm::MatrixD& A, const spm::VectorD&
 
     auto threads = std::vector<std::thread>{};
     auto syncPoint = std::barrier(parallelDegree, [&]() {
+        // Update the old solution with the new one for the next iteration.
         oldSolution = newSolution;
+        // Decrease the number of iterations by reference.
         iterations--;
     });
 
@@ -38,17 +40,20 @@ spm::VectorD spm::solveJacobiParallel(const spm::MatrixD& A, const spm::VectorD&
         }
     };
 
-    // Allocate threads
-    std::size_t offset = 0;
-    auto delta = (matrixSize / parallelDegree);
-    for (std::size_t _ = 0; _ < parallelDegree; _++, offset += delta) {
-        threads.emplace_back(task, offset, (_ == parallelDegree - 1) ? (matrixSize - 1) : offset + delta - 1);
-    }
-
     {
 #ifdef TRACE_PERFORMANCE
         spm::Timer performanceTimer("Native threads Jacobi method"sv, time);
 #endif
+        // Allocate threads and assign to each one of them
+        // a chunk to compute.
+        std::size_t offset = 0;
+
+        auto delta = (matrixSize / parallelDegree);
+        for (std::size_t _ = 0; _ < parallelDegree; _++, offset += delta) {
+            threads.emplace_back(task, offset, (_ == parallelDegree - 1) ? (matrixSize - 1) : offset + delta - 1);
+        }
+
+        // Wait for thread's termination.
         for (auto& thread: threads) thread.join();
     }
 
